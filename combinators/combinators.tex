@@ -203,14 +203,14 @@
 
 
 \begin{tabular}{ll}
-\multicolumn{2}{l}{\result{or} \texttt{->} \type{Result<U, E>}}\\
+\multicolumn{2}{l}{\result{or} \texttt{->} \type{Result<T, F>}}\\
 \midrule
 \texttt{Ok(t)}  & \static{Ok(t)}\\
 \texttt{Err(\_)} & \provide{res}\\
 \end{tabular}
 &
 \begin{tabular}{ll}
-\multicolumn{2}{l}{\result{or\_else} \texttt{->} \type{Result<U, E>}}\\
+\multicolumn{2}{l}{\result{or\_else} \texttt{->} \type{Result<T, F>}}\\
 \midrule
 \texttt{Ok(t)}  & \static{Ok(t)}\\
 \texttt{Err(e)} & \provide{op(}\static{e}\provide{)}\\
