@@ -1,127 +1,281 @@
-\documentclass[10pt,a4paper]{article}
+\documentclass[12pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
-\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[left=0.5cm,right=0.5cm,top=0.5cm,bottom=0.5cm]{geometry}
 \usepackage{booktabs}
-\usepackage[usenames,dvipsnames]{color}
 \usepackage{hyperref}
+
+%\usepackage[usenames,dvipsnames]{color}
 
 \author{Damian Poddebniak}
 \title{Combinators}
+
+\setlength{\paperwidth}{297mm}
+\setlength{\paperheight}{210mm}
 
 \usepackage[table]{xcolor}
 \definecolor{link}{HTML}{0000bb}
 \hypersetup{colorlinks = true, allcolors = {link}}
 
 \newcommand{\type}[1]{\textbf{#1}}
-\newcommand{\name}[1]{\href{https://doc.rust-lang.org/std/option/enum.Option.html\#method.#1}{\textbf{#1}}}
+\newcommand{\option}[1]{\href{https://doc.rust-lang.org/std/option/enum.Option.html\#method.#1}{\textbf{#1}}}
+\newcommand{\result}[1]{\href{https://doc.rust-lang.org/std/result/enum.Result.html\#method.#1}{\textbf{#1}}}
 \newcommand{\static}[1]{\textcolor{black}{#1}}
 \newcommand{\provide}[1]{\textcolor{red}{\emph{#1}}}
 
 \begin{document}
 
 \begin{center}
-	\huge{\textbf{\texttt{Option$<$T$>$}}}
+	\huge{\textbf{\texttt{Option<T>}}}
 \end{center}
 
+\medskip
+
 \begin{tabular}{lll}
-\begin{tabular}{lll}
-\name{is\_some}   & \texttt{->} & \type{bool}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{is\_some} \texttt{->} \type{bool}}\\
 \midrule
-\texttt{Some(\_)} & \texttt{->} & \static{true}\\
-\texttt{None}     & \texttt{->} & \static{false}\\
+\texttt{Some(\_)} & \static{true}\\
+\texttt{None}     & \static{false}\\
 \end{tabular}
 &
-\begin{tabular}{lll}
-\name{is\_none}   & \texttt{->} & \type{bool}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{is\_none} \texttt{->} \type{bool}}\\
 \midrule
-\texttt{Some(\_)} & \texttt{->} & \static{false}\\
-\texttt{None}     & \texttt{->} & \static{true}\\
+\texttt{Some(\_)} & \static{false}\\
+\texttt{None}     & \static{true}\\
 \end{tabular}
 &\\&&\\
 
-\begin{tabular}{lll}
-\name{unwrap}    & \texttt{->} & \type{T}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{unwrap} \texttt{->} \type{T}}\\
 \midrule
-\texttt{Some(t)} & \texttt{->} & \static{t}\\
-\texttt{None}    & \texttt{->} & \static{panic!()}\\
+\texttt{Some(t)} & \static{t}\\
+\texttt{None}    & \static{panic!()}\\
 \end{tabular}
 &
-\begin{tabular}{lll}
-\name{unwrap\_or} & \texttt{->} & \type{T}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{unwrap\_or} \texttt{->} \type{T}}\\
 \midrule
-\texttt{Some(t)}  & \texttt{->} & \static{t}\\
-\texttt{None}     & \texttt{->} & \provide{default}\\
+\texttt{Some(t)} & \static{t}\\
+\texttt{None}    & \provide{default}\\
 \end{tabular}
 &
-\begin{tabular}{lll}
-\name{unwrap\_or\_else} & \texttt{->} & \type{T}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{unwrap\_or\_else} \texttt{->} \type{T}}\\
 \midrule
-\texttt{Some(t)}        & \texttt{->} & \static{t}\\
-\texttt{None}           & \texttt{->} & \provide{default()}\\
+\texttt{Some(t)} & \static{t}\\
+\texttt{None}    & \provide{default()}\\
 \end{tabular}
 \\&&\\
 
-\begin{tabular}{lll}
-\name{expect}    & \texttt{->} & \type{T}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{expect} \texttt{->} \type{T}}\\
 \midrule
-\texttt{Some(t)} & \texttt{->} & \static{t}\\
-\texttt{None}    & \texttt{->} & \static{panic!(}\provide{msg}\static{)}\\
+\texttt{Some(t)} & \static{t}\\
+\texttt{None}    & \static{panic!(}\provide{msg}\static{)}\\
 \end{tabular} 
 &&\\&&\\
 
-\begin{tabular}{lll}
-\name{map}       & \texttt{->} & \type{Option<U>}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{map} \texttt{->} \type{Option<U>}}\\
 \midrule
-\texttt{Some(t)} & \texttt{->} & \provide{f(}\static{t}\provide{)}\\
-\texttt{None}    & \texttt{->} & \static{None}\\
+\texttt{Some(t)} & \static{Some(}\provide{f(}\static{t}\provide{)}\static{)}\\
+\texttt{None}    & \static{None}\\
 \end{tabular}
 &
-\begin{tabular}{lll}
-\name{map\_or}   & \texttt{->} & \type{U}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{map\_or} \texttt{->} \type{U}}\\
 \midrule
-\texttt{Some(t)} & \texttt{->} & \provide{f(}\static{t}\provide{)}\\
-\texttt{None}    & \texttt{->} & \provide{default}\\
+\texttt{Some(t)} & \provide{f(}\static{t}\provide{)}\\
+\texttt{None}    & \provide{default}\\
 \end{tabular}
 &
-\begin{tabular}{lll}
-\name{map\_or\_else} & \texttt{->} & \type{U}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{map\_or\_else} \texttt{->} \type{U}}\\
 \midrule
-\texttt{Some(t)}     & \texttt{->} & \provide{f(}\static{t}\provide{)}\\
-\texttt{None}        & \texttt{->} & \provide{default()}\\
+\texttt{Some(t)} & \provide{f(}\static{t}\provide{)}\\
+\texttt{None}    & \provide{default()}\\
 \end{tabular}
 \\&&\\
 
-\begin{tabular}{lll}
-\name{and}        & \texttt{->} & \type{Option<U>}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{and} \texttt{->} \type{Option<U>}}\\
 \midrule
-\texttt{Some(\_)} & \texttt{->} & \provide{optb}\\
-\texttt{None}     & \texttt{->} & \static{None}\\
+\texttt{Some(\_)} & \provide{optb}\\
+\texttt{None}     & \static{None}\\
 \end{tabular}
 &
-\begin{tabular}{lll}
-\name{and\_then}   & \texttt{->} & \type{Option<U>}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{and\_then} \texttt{->} \type{Option<U>}}\\
 \midrule
-\texttt{Some(t)}   & \texttt{->} & \provide{f(}\static{t}\provide{)}\\
-\texttt{None}      & \texttt{->} & \static{None}\\
+\texttt{Some(t)} & \provide{f(}\static{t}\provide{)}\\
+\texttt{None}    & \static{None}\\
 \end{tabular}
 &\\&&\\
 
-\begin{tabular}{lll}
-\name{or}         & \texttt{->} & \type{Option<T>}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{or} \texttt{->} \type{Option<T>}}\\
 \midrule
-\texttt{Some(\_)} & \texttt{->} & \static{self}\\
-\texttt{None}     & \texttt{->} & \provide{optb}\\
+\texttt{Some(\_)} & \static{self}\\
+\texttt{None}     & \provide{optb}\\
 \end{tabular}
 &
-\begin{tabular}{lll}
-\name{or\_else}   & \texttt{->} & \type{Option<T>}\\
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\option{or\_else} \texttt{->} \type{Option<T>}}\\
 \midrule
-\texttt{Some(\_)} & \texttt{->} & \static{self}\\
-\texttt{None}     & \texttt{->} & \provide{optb()}\\
+\texttt{Some(\_)} & \static{self}\\
+\texttt{None}     & \provide{optb()}\\
 \end{tabular}
 &\\ 
+\end{tabular}
+
+\newpage
+
+\begin{center}
+	\huge{\textbf{\texttt{Result<T, E>}}}
+\end{center}
+
+\bigskip
+
+\begin{tabular}{llll}
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{is\_ok} \texttt{->} \type{bool}}\\
+\midrule
+\texttt{Ok(\_)}  & \static{true}\\
+\texttt{Err(\_)} & \static{false}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{is\_err} \texttt{->} \type{bool}}\\
+\midrule
+\texttt{Ok(\_)}  & \static{false}\\
+\texttt{Err(\_)} & \static{true}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{ok} \texttt{->} \type{Option<T>}}\\
+\midrule
+\texttt{Ok(t)}  & \static{t}\\
+\texttt{Err(\_)} & \static{None}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{err} \texttt{->} \type{Option<T>}}\\
+\midrule
+\texttt{Ok(\_)}  & \static{None}\\
+\texttt{Err(e)} & \static{e}\\
+\end{tabular}
+\\&&&\\
+
+
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{map} \texttt{->} \type{Result<U, E>}}\\
+\midrule
+\texttt{Ok(t)}  & \static{Ok(} \provide{f(} \static{t}\provide{)}\static{)}\\
+\texttt{Err(e)} & \static{Err(e)}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{map\_err} \texttt{->} \type{Result<T, F>}}\\
+\midrule
+\texttt{Ok(t)}  & \static{Ok(t)}\\
+\texttt{Err(e)} & \static{Err(}\provide{f(}\static{e}\provide{)}\static{)}\\
+\end{tabular}
+&&\\&&&\\
+
+
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{and} \texttt{->} \type{Result<U, E>}}\\
+\midrule
+\texttt{Ok(\_)}  & \provide{res}\\
+\texttt{Err(e)} & \static{Err(e)}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{and\_then} \texttt{->} \type{Result<U, E>}}\\
+\midrule
+\texttt{Ok(t)}  & \provide{op(}\static{t}\provide{)}\\
+\texttt{Err(e)} & \static{Err(e)}\\
+\end{tabular}
+&&\\&&&\\
+
+
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{or} \texttt{->} \type{Result<U, E>}}\\
+\midrule
+\texttt{Ok(t)}  & \static{Ok(t)}\\
+\texttt{Err(\_)} & \provide{res}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{or\_else} \texttt{->} \type{Result<U, E>}}\\
+\midrule
+\texttt{Ok(t)}  & \static{Ok(t)}\\
+\texttt{Err(e)} & \provide{op(}\static{e}\provide{)}\\
+\end{tabular}
+&&\\&&&\\
+
+
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{unwrap} \texttt{->} \type{T}}\\
+\midrule
+\texttt{Ok(t)}  & \static{t}\\
+\texttt{Err(e)} & \static{panic!(e)}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{unwrap\_or} \texttt{->} \type{T}}\\
+\midrule
+\texttt{Ok(t)}  & \static{t}\\
+\texttt{Err(\_)} & \provide{optb}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{unwrap\_or\_else} \texttt{->} \type{T}}\\
+\midrule
+\texttt{Ok(t)}  & \static{t}\\
+\texttt{Err(e)} & \provide{optb(}\static{e}\provide{)}\\
+\end{tabular}
+&\\&&&\\
+
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{unwrap\_err} \texttt{->} \type{E}}\\
+\midrule
+\texttt{Ok(t)}  & \static{panic!(t)}\\
+\texttt{Err(e)} & \static{e}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{unwrap\_err\_or} \texttt{->} \type{E}}\\
+\midrule
+\texttt{\ldots} & \static{\ldots}\\
+\texttt{\ldots} & \static{\ldots}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{unwrap\_err\_or\_else} \texttt{->} \type{E}}\\
+\midrule
+\texttt{\ldots} & \static{\ldots}\\
+\texttt{\ldots} & \static{\ldots}\\
+\end{tabular}
+\\&&&\\
+
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{expect} \texttt{->} \type{T}}\\
+\midrule
+\texttt{Ok(t)}  & \static{t}\\
+\texttt{Err(e)} & \static{panic!(}\provide{msg}\static{, e)}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+\multicolumn{2}{l}{\result{expect\_err} \texttt{->} \type{E}}\\
+\midrule
+\texttt{\ldots} & \static{\ldots}\\
+\texttt{\ldots} & \static{\ldots}\\
+\end{tabular}
+&&\\
 \end{tabular} 
 
 \end{document}
