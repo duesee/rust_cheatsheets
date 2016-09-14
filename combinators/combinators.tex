@@ -1,0 +1,127 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{booktabs}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+
+\author{Damian Poddebniak}
+\title{Combinators}
+
+\usepackage[table]{xcolor}
+\definecolor{link}{HTML}{0000bb}
+\hypersetup{colorlinks = true, allcolors = {link}}
+
+\newcommand{\type}[1]{\textbf{#1}}
+\newcommand{\name}[1]{\href{https://doc.rust-lang.org/std/option/enum.Option.html\#method.#1}{\textbf{#1}}}
+\newcommand{\static}[1]{\textcolor{black}{#1}}
+\newcommand{\provide}[1]{\textcolor{red}{\emph{#1}}}
+
+\begin{document}
+
+\begin{center}
+	\huge{\textbf{\texttt{Option$<$T$>$}}}
+\end{center}
+
+\begin{tabular}{lll}
+\begin{tabular}{lll}
+\name{is\_some}   & \texttt{->} & \type{bool}\\
+\midrule
+\texttt{Some(\_)} & \texttt{->} & \static{true}\\
+\texttt{None}     & \texttt{->} & \static{false}\\
+\end{tabular}
+&
+\begin{tabular}{lll}
+\name{is\_none}   & \texttt{->} & \type{bool}\\
+\midrule
+\texttt{Some(\_)} & \texttt{->} & \static{false}\\
+\texttt{None}     & \texttt{->} & \static{true}\\
+\end{tabular}
+&\\&&\\
+
+\begin{tabular}{lll}
+\name{unwrap}    & \texttt{->} & \type{T}\\
+\midrule
+\texttt{Some(t)} & \texttt{->} & \static{t}\\
+\texttt{None}    & \texttt{->} & \static{panic!()}\\
+\end{tabular}
+&
+\begin{tabular}{lll}
+\name{unwrap\_or} & \texttt{->} & \type{T}\\
+\midrule
+\texttt{Some(t)}  & \texttt{->} & \static{t}\\
+\texttt{None}     & \texttt{->} & \provide{default}\\
+\end{tabular}
+&
+\begin{tabular}{lll}
+\name{unwrap\_or\_else} & \texttt{->} & \type{T}\\
+\midrule
+\texttt{Some(t)}        & \texttt{->} & \static{t}\\
+\texttt{None}           & \texttt{->} & \provide{default()}\\
+\end{tabular}
+\\&&\\
+
+\begin{tabular}{lll}
+\name{expect}    & \texttt{->} & \type{T}\\
+\midrule
+\texttt{Some(t)} & \texttt{->} & \static{t}\\
+\texttt{None}    & \texttt{->} & \static{panic!(}\provide{msg}\static{)}\\
+\end{tabular} 
+&&\\&&\\
+
+\begin{tabular}{lll}
+\name{map}       & \texttt{->} & \type{Option<U>}\\
+\midrule
+\texttt{Some(t)} & \texttt{->} & \provide{f(}\static{t}\provide{)}\\
+\texttt{None}    & \texttt{->} & \static{None}\\
+\end{tabular}
+&
+\begin{tabular}{lll}
+\name{map\_or}   & \texttt{->} & \type{U}\\
+\midrule
+\texttt{Some(t)} & \texttt{->} & \provide{f(}\static{t}\provide{)}\\
+\texttt{None}    & \texttt{->} & \provide{default}\\
+\end{tabular}
+&
+\begin{tabular}{lll}
+\name{map\_or\_else} & \texttt{->} & \type{U}\\
+\midrule
+\texttt{Some(t)}     & \texttt{->} & \provide{f(}\static{t}\provide{)}\\
+\texttt{None}        & \texttt{->} & \provide{default()}\\
+\end{tabular}
+\\&&\\
+
+\begin{tabular}{lll}
+\name{and}        & \texttt{->} & \type{Option<U>}\\
+\midrule
+\texttt{Some(\_)} & \texttt{->} & \provide{optb}\\
+\texttt{None}     & \texttt{->} & \static{None}\\
+\end{tabular}
+&
+\begin{tabular}{lll}
+\name{and\_then}   & \texttt{->} & \type{Option<U>}\\
+\midrule
+\texttt{Some(t)}   & \texttt{->} & \provide{f(}\static{t}\provide{)}\\
+\texttt{None}      & \texttt{->} & \static{None}\\
+\end{tabular}
+&\\&&\\
+
+\begin{tabular}{lll}
+\name{or}         & \texttt{->} & \type{Option<T>}\\
+\midrule
+\texttt{Some(\_)} & \texttt{->} & \static{self}\\
+\texttt{None}     & \texttt{->} & \provide{optb}\\
+\end{tabular}
+&
+\begin{tabular}{lll}
+\name{or\_else}   & \texttt{->} & \type{Option<T>}\\
+\midrule
+\texttt{Some(\_)} & \texttt{->} & \static{self}\\
+\texttt{None}     & \texttt{->} & \provide{optb()}\\
+\end{tabular}
+&\\ 
+\end{tabular} 
+
+\end{document}
