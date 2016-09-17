@@ -10,14 +10,6 @@
 
 # Markup
 
-<style>
-.precode {
-  background: white;
-  padding: 0px;
-  margin: 0px;
-}
-</style>
-
 <table>
   <tr>
     <th colspan="2"><code><span class="fnname">is_some</span>() -&gt; <span class="primitive">bool</span></code></th>
