@@ -1,71 +1,70 @@
 # `Option<T>`
 
-| is_some() -> bool          |                             | is_none() -> bool               |                             |
+|                            |                             |                                 |                             |
 |----------------------------|-----------------------------|---------------------------------|-----------------------------|
+| *is_some() -> bool*        |                             | *is_none() -> bool*             |                             |
 | Some(_)                    | true                        | Some(_)                         | false                       |
 | None                       | false                       | None                            | true                        |
 
-## Proceed with the inner value
+Proceed with the inner value
 
-| unwrap() -> T              |                             | expect(msg) -> T                |                             |
+|                            |                             |                                 |                             |                            |              |
+|----------------------------|-----------------------------|---------------------------------|-----------------------------|----------------------------|--------------|
+| *unwrap() -> T*            |                             | *expect(msg) -> T*              |                             |                            |              |
+| Some(t)                    | t                           | Some(t)                         | t                           |                            |              |
+| None                       | panic!()                    | None                            | panic!(msg)                 |                            |              |
+| *unwrap_or(def) -> T*      |                             | *unwrap_or_else(f) -> T*        |                             | *unwrap_or_default() -> T* |              |
+| Some(t)                    | t                           | Some(t)                         | t                           | Some(t)                    | t            |
+| None                       | def                         | None                            | f()                         | None                       | T::default() |
+| *map_or(default, f) -> U*  |                             | *map_or_else(default, f) -> U*  |                             |                            |              |
+| Some(t)                    | f(t)                        | Some(t)                         | f(t)                        |                            |              |
+| None                       | default                     | None                            | default()                   |                            |              |
+
+Option to Option Combinators
+
+|                            |                             |                                 |                             |
 |----------------------------|-----------------------------|---------------------------------|-----------------------------|
-| Some(t)                    | t                           | Some(t)                         | t                           |
-| None                       | panic!()                    | None                            | panic!(msg)                 |
-
-| unwrap_or(def) -> T        |                             | unwrap_or_else(f) -> T          |                             | unwrap_or_default() -> T |              |
-|----------------------------|-----------------------------|---------------------------------|-----------------------------|--------------------------|--------------|
-| Some(t)                    | t                           | Some(t)                         | t                           | Some(t)                  | t            |
-| None                       | def                         | None                            | f()                         | None                     | T::default() |
-
-| map_or(default, f) -> U    |                             | map_or_else(default, f) -> U    |                             |
-|----------------------------|-----------------------------|---------------------------------|-----------------------------|
-| Some(t)                    | f(t)                        | Some(t)                         | f(t)                        |
-| None                       | default                     | None                            | default()                   |
-
-## Option to Option Combinators
-
-| map(f) -> Option<U>        |                             |
-|----------------------------|-----------------------------|
-| Some(t)                    | Some(f(t))                  |
-| None                       | None                        |
-
-| and(optb) -> Option<U>     |                             | and_then(f) -> Option<U>        |                             |
-|----------------------------|-----------------------------|---------------------------------|-----------------------------|
+| *map(f) -> Option<U>*      |                             |                                 |                             |
+| Some(t)                    | Some(f(t))                  |                                 |                             |
+| None                       | None                        |                                 |                             |
+| *and(optb) -> Option<U>*   |                             | *and_then(f) -> Option<U>*      |                             |
 | Some(_)                    | optb                        | Some(t)                         | f(t)                        |
 | None                       | None                        | None                            | None                        |
-
-| or(optb) -> Option<T>      |                             | or_else(f) -> Option<T>         |                             |
-|----------------------------|-----------------------------|---------------------------------|-----------------------------|
+| *or(optb) -> Option<T>*    |                             | *or_else(f) -> Option<T>*       |                             |
 | Some(_)                    | self                        | Some(_)                         | self                        |
 | None                       | optb                        | None                            | f()                         |
 
-## Proceed with a reference to the inner value
+Proceed with a reference to the inner value
 
-| as_ref() -> Option<&T>     |                             | as_mut() -> Option<&mut T>      |                             |
+|                            |                             |                                 |                             |
 |----------------------------|-----------------------------|---------------------------------|-----------------------------|
+| *as_ref() -> Option<&T>*   |                             | *as_mut() -> Option<&mut T>*    |                             |
 | Some(t)                    | Some(&t)                    | Some(t)                         | Some(&mut t)                |
 | None                       | None                        | None                            | None                        |
 
-## Take or clone the inner value
+Take or clone the inner value
 
-| take() -> Option<T>        |                             | cloned() -> Option<T>           |                             |
+|                            |                             |                                 |                             |
 |----------------------------|-----------------------------|---------------------------------|-----------------------------|
+| *take() -> Option<T>*      |                             | *cloned() -> Option<T>*         |                             |
 | Some(t)                    | Some(t) (self becomes None) | Some(&t)                        | Some(t) (clones t)          |
 | None                       | None                        | None                            | None                        |
 
-## Proceed with an iterator to the value (useful for iterator chaining)
+Proceed with an iterator to the value (useful for iterator chaining)
 
-| iter() -> Iter<T>          |                             | iter_mut() -> IterMut<T>        |                             |
+|                            |                             |                                 |                             |
 |----------------------------|-----------------------------|---------------------------------|-----------------------------|
+| *iter() -> Iter<T>*        |                             | *iter_mut() -> IterMut<T>*      |                             |
 | Some(t)                    | iter.next() == Some(&t)     | Some(t)                         | iter.next() == Some(&mut t) |
 | None                       | iter.next() == None         | None                            | iter.next() == None         |
 
-## Proceed with an Result, rather than an Option
+Proceed with an Result, rather than an Option
 
-| ok_or(err) -> Result<T, E> |                             | ok_or_else(err) -> Result<T, E> |                             |
-|----------------------------|-----------------------------|---------------------------------|-----------------------------|
-| Some(t)                    | Ok(t)                       | Some(t)                         | Ok(t)                       |
-| None                       | Err(err)                    | None                            | Err(err())                  |
+|                              |                             |                                   |                             |
+|------------------------------|-----------------------------|-----------------------------------|-----------------------------|
+| *ok_or(err) -> Result<T, E>* |                             | *ok_or_else(err) -> Result<T, E>* |                             |
+| Some(t)                      | Ok(t)                       | Some(t)                           | Ok(t)                       |
+| None                         | Err(err)                    | None                              | Err(err())                  |
 
 ---
 
