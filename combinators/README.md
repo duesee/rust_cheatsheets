@@ -1,7 +1,8 @@
 # `Option<T>`
 
-| is_some() -> bool          |                             | is_none() -> bool               |                             |                              |              |
+|                            |                             |                                 |                             |                              |              |
 |----------------------------|-----------------------------|---------------------------------|-----------------------------|------------------------------|--------------|
+| is_some() -> bool          |                             | is_none() -> bool               |                             |                              |              |
 | Some(_)                    | true                        | Some(_)                         | false                       |                              |              |
 | None                       | false                       | None                            | true                        |                              |              |
 |                            |                             |                                 |                             |                              |              |
@@ -45,35 +46,44 @@
 
 # `Result<T, E>`
 
-| is_ok() -> bool          |                | is_err() -> bool             |            |                         |       |
-|--------------------------|----------------|------------------------------|------------|-------------------------|-------|
-| Ok(_)                    | true           | Ok(_)                        | false      |                         |       |
-| Err(_)                   | false          | Err(_)                       | true       |                         |       |
-|                          |                |                              |            |                         |       |
-| ok() -> Option<T>        |                | err() -> Option<E>           |            |                         |       |
-| Ok(t)                    | t              | Ok(_)                        | None       |                         |       |
-| Err(_)                   | None           | Err(e)                       | e          |                         |       |
-|                          |                |                              |            |                         |       |
-| map(op) -> Result<U, E>  |                | map_err(op) -> Result<T, F>  |            |                         |       |
-| Ok(t)                    | Ok(op(t))      | Ok(t)                        | Ok(t)      |                         |       |
-| Err(e)                   | Err(e)         | Err(e)                       | Err(op(e)) |                         |       |
-|                          |                |                              |            |                         |       |
-| and(res) -> Result<U, E> |                | and_then(op) -> Result<U, E> |            |                         |       |
-| Ok(_)                    | res            | Ok(t)                        | op(t)      |                         |       |
-| Err(e)                   | Err(e)         | Err(e)                       | Err(e)     |                         |       |
-|                          |                |                              |            |                         |       |
-| or(res) -> Result<T, F>  |                | or_else(op) -> Result<T, F>  |            |                         |       |
-| Ok(t)                    | Ok(t)          | Ok(t)                        | Ok(t)      |                         |       |
-| Err(_)                   | res            | Err(e)                       | op(e)      |                         |       |
-|                          |                |                              |            |                         |       |
-| unwrap() -> T            |                | unwrap_or(optb) -> T         |            | unwrap_or_else(op) -> T |       |
-| Ok(t)                    | t              | Ok(t)                        | t          | Ok(t)                   | t     |
-| Err(e)                   | panic!(e)      | Err(_)                       | optb       | Err(e)                  | op(e) |
-|                          |                |                              |            |                         |       |
-| expect(msg) -> T         |                |                              |            |                         |       |
-| Ok(t)                    | t              |                              |            |                         |       |
-| Err(e)                   | panic!(msg, e) |                              |            |                         |       |
-|                          |                |                              |            |                         |       |
-| unwrap_err() -> E        |                |                              |            |                         |       |
-| Ok(t)                    | panic!(t)      |                              |            |                         |       |
-| Err(e)                   | e              |                              |            |                         |       |
+|                            |                         |                                    |                             |                              |              |
+|----------------------------|-------------------------|------------------------------------|-----------------------------|------------------------------|--------------|
+| is_ok() -> bool            |                         | is_err() -> bool                   |                             |                              |              |
+| Ok(_)                      | true                    | Ok(_)                              | false                       |                              |              |
+| Err(_)                     | false                   | Err(_)                             | true                        |                              |              |
+|                            |                         |                                    |                             |                              |              |
+| ok() -> Option<T>          |                         | err() -> Option<E>                 |                             |                              |              |
+| Ok(t)                      | t                       | Ok(_)                              | None                        |                              |              |
+| Err(_)                     | None                    | Err(e)                             | e                           |                              |              |
+|                            |                         |                                    |                             |                              |              |
+| map(op) -> Result<U, E>    |                         | map_err(op) -> Result<T, F>        |                             |                              |              |
+| Ok(t)                      | Ok(op(t))               | Ok(t)                              | Ok(t)                       |                              |              |
+| Err(e)                     | Err(e)                  | Err(e)                             | Err(op(e))                  |                              |              |
+|                            |                         |                                    |                             |                              |              |
+| and(res) -> Result<U, E>   |                         | and_then(op) -> Result<U, E>       |                             |                              |              |
+| Ok(_)                      | res                     | Ok(t)                              | op(t)                       |                              |              |
+| Err(e)                     | Err(e)                  | Err(e)                             | Err(e)                      |                              |              |
+|                            |                         |                                    |                             |                              |              |
+| or(res) -> Result<T, F>    |                         | or_else(op) -> Result<T, F>        |                             |                              |              |
+| Ok(t)                      | Ok(t)                   | Ok(t)                              | Ok(t)                       |                              |              |
+| Err(_)                     | res                     | Err(e)                             | op(e)                       |                              |              |
+|                            |                         |                                    |                             |                              |              |
+| unwrap() -> T              |                         | expect(msg) -> T                   |                             |                              |              |
+| Ok(t)                      | t                       | Ok(t)                              | t                           |                              |              |
+| Err(e)                     | panic!(e)               | Err(e)                             | panic!(msg, e)              |                              |              |
+|                            |                         |                                    |                             |                              |              |
+| unwrap_or(optb) -> T       |                         | unwrap_or_else(op) -> T            |                             | unwrap_or_default(self) -> T |              |
+| Ok(t)                      | t                       | Ok(t)                              | t                           | Ok(t)                        | t            |
+| Err(_)                     | optb                    | Err(e)                             | op(e)                       | Err(e)                       | T::default() |
+|                            |                         |                                    |                             |                              |              |
+| unwrap_err() -> E          |                         |                                    |                             |                              |              |
+| Ok(t)                      | panic!(t)               |                                    |                             |                              |              |
+| Err(e)                     | e                       |                                    |                             |                              |              |
+|                            |                         |                                    |                             |                              |              |
+| as_ref() -> Result<&T, &E> |                         | as_mut() -> Result<&mut T, &mut E> |                             |                              |              |
+| Ok(t)                      | &t                      | Ok(t)                              | &mut t                      |                              |              |
+| Err(e)                     | &e                      | Err(e)                             | &mut e                      |                              |              |
+|                            |                         |                                    |                             |                              |              |
+| iter() -> Iter<T>          |                         | iter_mut() -> IterMut<T>           |                             |                              |              |
+| Ok(t)                      | iter.next() == Some(&t) | Ok(t)                              | iter.next() == Some(&mut t) |                              |              |
+| Err(e)                     | iter.next() == None     | Err(e)                             | iter.next() == None         |                              |              |
