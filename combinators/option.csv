@@ -18,7 +18,7 @@ iter() -> Iter<T>,, iter_mut() -> IterMut<T>,,,
 Some(t), iter.next() == Some(&t), Some(t), iter.next() == Some(&mut t),,
 None, iter.next() == None, None, iter.next() == None,,
 
-map(f) -> Option<U>,, "map_or(default, f)" -> U,, "map_or_else(default, f) -> U",
+map(f) -> Option<U>,, "map_or(default, f) -> U",, "map_or_else(default, f) -> U",
 Some(t), Some(f(t)), Some(t), f(t), Some(t), f(t)
 None, None, None, default, None, default()
 
