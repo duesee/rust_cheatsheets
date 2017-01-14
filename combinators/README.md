@@ -1,525 +1,79 @@
 # `Option<T>`
 
-![option cheatsheet](./option.png)
+| is_some() -> bool          |                             | is_none() -> bool               |                             |                              |              |
+|----------------------------|-----------------------------|---------------------------------|-----------------------------|------------------------------|--------------|
+| Some(_)                    | true                        | Some(_)                         | false                       |                              |              |
+| None                       | false                       | None                            | true                        |                              |              |
+|                            |                             |                                 |                             |                              |              |
+| ok_or(err) -> Result<T, E> |                             | ok_or_else(err) -> Result<T, E> |                             |                              |              |
+| Some(t)                    | Ok(t)                       | Some(t)                         | Ok(t)                       |                              |              |
+| None                       | Err(err)                    | None                            | Err(err())                  |                              |              |
+|                            |                             |                                 |                             |                              |              |
+| unwrap_or(def) -> T        |                             | unwrap_or_else(f) -> T          |                             | unwrap_or_default() -> T     |              |
+| Some(t)                    | t                           | Some(t)                         | t                           | Some(t)                      | t            |
+| None                       | def                         | None                            | f()                         | None                         | T::default() |
+|                            |                             |                                 |                             |                              |              |
+| unwrap() -> T              |                             | expect(msg) -> T                |                             |                              |              |
+| Some(t)                    | t                           | Some(t)                         | t                           |                              |              |
+| None                       | panic!()                    | None                            | panic!(msg)                 |                              |              |
+|                            |                             |                                 |                             |                              |              |
+| iter() -> Iter<T>          |                             | iter_mut() -> IterMut<T>        |                             |                              |              |
+| Some(t)                    | iter.next() == Some(&t)     | Some(t)                         | iter.next() == Some(&mut t) |                              |              |
+| None                       | iter.next() == None         | None                            | iter.next() == None         |                              |              |
+|                            |                             |                                 |                             |                              |              |
+| map(f) -> Option<U>        |                             | map_or(default, f) -> U         |                             | map_or_else(default, f) -> U |              |
+| Some(t)                    | Some(f(t))                  | Some(t)                         | f(t)                        | Some(t)                      | f(t)         |
+| None                       | None                        | None                            | default                     | None                         | default()    |
+|                            |                             |                                 |                             |                              |              |
+| and(optb) -> Option<U>     |                             | and_then(f) -> Option<U>        |                             |                              |              |
+| Some(_)                    | optb                        | Some(t)                         | f(t)                        |                              |              |
+| None                       | None                        | None                            | None                        |                              |              |
+|                            |                             |                                 |                             |                              |              |
+| or(optb) -> Option<T>      |                             | or_else(f) -> Option<T>         |                             |                              |              |
+| Some(_)                    | self                        | Some(_)                         | self                        |                              |              |
+| None                       | optb                        | None                            | f()                         |                              |              |
+|                            |                             |                                 |                             |                              |              |
+| as_ref() -> Option<&T>     |                             | as_mut() -> Option<&mut T>      |                             |                              |              |
+| Some(t)                    | Some(&t)                    | Some(t)                         | Some(&mut t)                |                              |              |
+| None                       | None                        | None                            | None                        |                              |              |
+|                            |                             |                                 |                             |                              |              |
+| take() -> Option<T>        |                             | cloned() -> Option<T>           |                             |                              |              |
+| Some(t)                    | Some(t) (self becomes None) | Some(&t)                        | Some(t) (clones t)          |                              |              |
+| None                       | None                        | None                            | None                        |                              |              |
 
 ---
 
 # `Result<T, E>`
 
-![result cheatsheet](./result.png)
-
-# Markup
-
-<table>
-  <tr>
-    <th colspan="2"><code><span class="fnname">is_some</span>() -&gt; <span class="primitive">bool</span></code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">is_none</span>() -&gt; <span class="primitive">bool</span></code></th>
-    <th></th>
-    <th colspan="2"></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(_)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="bool-val">false</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="bool-val">false</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="bool-val">true</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <th colspan="2"><code><span class="fnname">unwrap</span>() -&gt; T</code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">unwrap_or</span>(def) -&gt; T</code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">unwrap_or_else</span>(f) -&gt; T</code></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">t</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">t</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">t</span></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="macro">panic</span><span class="macro">!</span>()</pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="ident">def</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="ident">f</span>()</pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <th colspan="2"><code><span class="fnname">expect</span>(msg) -&gt; T</code></th>
-    <th></th>
-    <th colspan="2"></th>
-    <th></th>
-    <th colspan="2"></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">t</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="macro">panic</span><span class="macro">!</span>(<span class="ident">msg</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <th colspan="2"><code><span class="fnname">map</span>(f) -&gt; <span class="enum">Option</span>&lt;U&gt;</code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">map_or</span>(default, f) -&gt; U</code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">map_or_else</span>(default, f) -&gt; U</code></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(<span class="ident">f</span>(<span class="ident">t</span>))</pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">f</span>(<span class="ident">t</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">f</span>(<span class="ident">t</span>)</pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="ident">default</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="ident">default</span></pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <th colspan="2"><code><span class="fnname">and</span>(optb) -&gt; <span class="enum">Option</span>&lt;U&gt;</code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">and_then</span>(f) -&gt; <span class="enum">Option</span>&lt;U&gt;</code></th>
-    <th></th>
-    <th colspan="2"></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="ident">optb</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">f</span>(<span class="ident">t</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <th colspan="2"><code><span class="fnname">or</span>(optb) -&gt; <span class="enum">Option</span>&lt;T&gt;</code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">or_else</span>(f) -&gt; <span class="enum">Option</span>&lt;T&gt;</code></th>
-    <th></th>
-    <th colspan="2"></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="self">self</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Some</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="self">self</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="ident">optb</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td><pre class="rust precode"><span class="ident">f</span>()</pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-</table>
-
-<table>
-  <tr>
-    <th colspan="2"><code><span class="fnname">is_ok</span>() -&gt; <span class="primitive">bool</span></code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">is_err</span>() -&gt; <span class="primitive">bool</span></code></th>
-    <th></th>
-    <th colspan="2"></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="bool-val">true</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="bool-val">false</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="bool-val">false</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="bool-val">true</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <th colspan="2"><code><span class="fnname">ok</span>() -&gt; <span class="enum">Option</span>&lt;T&gt;</code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">err</span>() -&gt; <span class="enum">Option</span>&lt;E&gt;</code></th>
-    <th></th>
-    <th colspan="2"></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">t</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">None</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">e</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <th colspan="2"><code><span class="fnname">map</span>(op) -&gt; <span class="enum">Result</span>&lt;U,&nbsp;E&gt;</code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">map_err</span>(op) -&gt; <span class="enum">Result</span>&lt;T,&nbsp;F&gt;</code></th>
-    <th></th>
-    <th colspan="2"></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">op</span>(<span class="ident">t</span>))</pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">op</span>(<span class="ident">e</span>))</pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <th colspan="2"><code><span class="fnname">and</span>(res) -&gt; <span class="enum">Result</a>&lt;U,&nbsp;E&gt;</code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">and_then</span>(op) -&gt; <span class="enum">Result</a>&lt;U,&nbsp;E&gt;</code></th>
-    <th></th>
-    <th colspan="2"></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="ident">res</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">op</span>(<span class="ident">t</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <th colspan="2"><code><span class="fnname">or</span>(res) -&gt; <span class="enum">Result</span>&lt;T,&nbsp;F&gt;</code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">or_else</span>(op) -&gt; <span class="enum">Result</span>&lt;T,&nbsp;F&gt;</code></th>
-    <th></th>
-    <th colspan="2"></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="ident">res</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">op</span>(<span class="ident">e</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <th colspan="2"><code><span class="fnname">unwrap</span>() -&gt; T</code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">unwrap_or</span>(optb) -&gt; T</code></th>
-    <th></th>
-    <th colspan="2"><code><span class="fnname">unwrap_or_else</span>(op) -&gt; T</code></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">t</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">t</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">t</span></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td><pre class="rust precode"><span class="macro">panic</span><span class="macro">!</span>(<span class="ident">e</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(_)</pre></td>
-    <td><pre class="rust precode"><span class="ident">optb</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">op</span>(<span class="ident">e</span>)</pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <th colspan="2"><code><span class="fnname">expect</span>(msg) -&gt; T</code></th>
-    <th></th>
-    <th colspan="2"></th>
-    <th></th>
-    <th colspan="2"></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">t</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td><pre class="rust precode"><span class="macro">panic</span><span class="macro">!</span>(<span class="ident">msg</span>, <span class="ident">e</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <th colspan="2"><code><span class="fnname">unwrap_err</span>() -&gt; E</code></th>
-    <th></th>
-    <th colspan="2"></th>
-    <th></th>
-    <th colspan="2"></th>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Ok</span>(<span class="ident">t</span>)</pre></td>
-    <td><pre class="rust precode"><span class="macro">panic</span><span class="macro">!</span>(<span class="ident">t</span>)</pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td><pre class="rust precode"><span class="prelude-val">Err</span>(<span class="ident">e</span>)</pre></td>
-    <td><pre class="rust precode"><span class="ident">e</span></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-    <td></td>
-    <td><pre class="rust precode"></pre></td>
-    <td><pre class="rust precode"></pre></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-</table>
+| is_ok() -> bool          |                | is_err() -> bool             |            |                         |       |
+|--------------------------|----------------|------------------------------|------------|-------------------------|-------|
+| Ok(_)                    | true           | Ok(_)                        | false      |                         |       |
+| Err(_)                   | false          | Err(_)                       | true       |                         |       |
+|                          |                |                              |            |                         |       |
+| ok() -> Option<T>        |                | err() -> Option<E>           |            |                         |       |
+| Ok(t)                    | t              | Ok(_)                        | None       |                         |       |
+| Err(_)                   | None           | Err(e)                       | e          |                         |       |
+|                          |                |                              |            |                         |       |
+| map(op) -> Result<U, E>  |                | map_err(op) -> Result<T, F>  |            |                         |       |
+| Ok(t)                    | Ok(op(t))      | Ok(t)                        | Ok(t)      |                         |       |
+| Err(e)                   | Err(e)         | Err(e)                       | Err(op(e)) |                         |       |
+|                          |                |                              |            |                         |       |
+| and(res) -> Result<U, E> |                | and_then(op) -> Result<U, E> |            |                         |       |
+| Ok(_)                    | res            | Ok(t)                        | op(t)      |                         |       |
+| Err(e)                   | Err(e)         | Err(e)                       | Err(e)     |                         |       |
+|                          |                |                              |            |                         |       |
+| or(res) -> Result<T, F>  |                | or_else(op) -> Result<T, F>  |            |                         |       |
+| Ok(t)                    | Ok(t)          | Ok(t)                        | Ok(t)      |                         |       |
+| Err(_)                   | res            | Err(e)                       | op(e)      |                         |       |
+|                          |                |                              |            |                         |       |
+| unwrap() -> T            |                | unwrap_or(optb) -> T         |            | unwrap_or_else(op) -> T |       |
+| Ok(t)                    | t              | Ok(t)                        | t          | Ok(t)                   | t     |
+| Err(e)                   | panic!(e)      | Err(_)                       | optb       | Err(e)                  | op(e) |
+|                          |                |                              |            |                         |       |
+| expect(msg) -> T         |                |                              |            |                         |       |
+| Ok(t)                    | t              |                              |            |                         |       |
+| Err(e)                   | panic!(msg, e) |                              |            |                         |       |
+|                          |                |                              |            |                         |       |
+| unwrap_err() -> E        |                |                              |            |                         |       |
+| Ok(t)                    | panic!(t)      |                              |            |                         |       |
+| Err(e)                   | e              |                              |            |                         |       |
