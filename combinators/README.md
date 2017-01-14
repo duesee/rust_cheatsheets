@@ -87,3 +87,7 @@
 | iter() -> Iter<T>          |                         | iter_mut() -> IterMut<T>           |                             |                              |              |
 | Ok(t)                      | iter.next() == Some(&t) | Ok(t)                              | iter.next() == Some(&mut t) |                              |              |
 | Err(e)                     | iter.next() == None     | Err(e)                             | iter.next() == None         |                              |              |
+
+# Thanks
+
+Tables generated with http://www.tablesgenerator.com/markdown_tables.
